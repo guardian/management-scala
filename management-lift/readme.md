@@ -10,8 +10,8 @@ To use, register the required management pages using Management.publishWithIndex
         LiftRules.statelessDispatchTable
           .append(Management.publishWithIndex(Manifest, Status(TimingMetrics.all), Properties))
 
-For the manifest to work, you need to generate a /version.txt file on your classpath. (I'll be creating a sbt
-plugin next to make this easy, check the [guardian github page][github] for it.)
+For the manifest to work, you need to generate a /version.txt file on your classpath. You probably
+want to use the sbt-version-info-plugin to do this.
 
 You can write your own pages easily, e.g. the Properties one above looks like this:
 
