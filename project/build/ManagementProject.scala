@@ -36,6 +36,7 @@ class ManagementProject(info: ProjectInfo) extends ParentProject(info) {
 }
 
 trait PublishSources extends BasicScalaProject with BasicPackagePaths {
+  lazy val sourceArtifact = Artifact.sources(artifactID)
   override def packageSrcJar = defaultJarPath("-sources.jar")
   override def packageToPublishActions = super.packageToPublishActions ++ Seq(packageSrc)
 }
