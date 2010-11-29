@@ -11,6 +11,8 @@ class ManagementProject(info: ProjectInfo) extends ParentProject(info) {
 
   lazy val managementLift = project("management-lift", "management-lift", new ManagementLift(_))
   lazy val versionInfoPlugin = project("sbt-version-info-plugin", "sbt-version-info-plugin", new VersionInfoPlugin(_))
+  lazy val packageDeployArtifactPlugin =
+    project("sbt-artifactrep-publish", "sbt-artifactrep-publish", new PublishToArtifactrepPlugin(_), versionInfoPlugin)
 
 
   class ManagementLift(info: ProjectInfo) extends DefaultProject(info) with PublishSources {
@@ -22,6 +24,7 @@ class ManagementProject(info: ProjectInfo) extends ParentProject(info) {
   }
 
   class VersionInfoPlugin(info: ProjectInfo) extends PluginProject(info)
+  class PublishToArtifactrepPlugin(info: ProjectInfo) extends PluginProject(info)
 
   override def managedStyle = ManagedStyle.Maven
 

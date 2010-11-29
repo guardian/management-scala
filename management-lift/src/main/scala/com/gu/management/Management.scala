@@ -32,8 +32,8 @@ trait XhmlManagementPage extends ManagementPage {
           { body }
         </body>
       </html>,
-      docType = Full(DocType.html5),
-      headers = Nil,
+      Full(DocType.html5),
+      Nil,
       cookies = Nil,
       code = 200, renderInIEMode = false)
 
