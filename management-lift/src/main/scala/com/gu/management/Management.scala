@@ -11,7 +11,7 @@ trait ManagementPage {
 
   // the backticks here make path not be a catch-all new variable,
   // but mean "match against the value of path"
-  lazy val dispatch: LiftRules.DispatchPF = {
+  def dispatch: LiftRules.DispatchPF = {
     case r@Req(`path`, _, GetRequest) => () => Full(render(r))
   }
 
@@ -40,6 +40,30 @@ trait XhmlManagementPage extends ManagementPage {
   def title: String
   def body(r: Req): NodeSeq
 }
+
+
+/**
+ * Mixin this trait if you want to support posting to your management page
+ */
+trait Postable extends ManagementPage {
+  override def dispatch = postDispatcher orElse super.dispatch
+
+  // the backticks here make path not be a catch-all new variable,
+  // but mean "match against the value of path"
+  def postDispatcher: LiftRules.DispatchPF = {
+    case r@Req(`path`, _, PostRequest) => () => {
+      try {
+        processPost(r)
+        Full(RedirectResponse(r.uri))
+      } catch {
+        case ex => Full(PlainTextResponse("unexpected error: " + ex.toString + "\n", 400))
+      }
+    }
+  }
+
+  def processPost(r: Req)
+}
+
 
 object Management {
   def publishWithIndex(pages: ManagementPage*): LiftRules.DispatchPF =

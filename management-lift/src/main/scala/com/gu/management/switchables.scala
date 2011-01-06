@@ -1,8 +1,8 @@
 package com.gu.management
 
-import net.liftweb.common.Loggable
+import net.liftweb.common._
 import java.util.concurrent.atomic.AtomicBoolean
-import net.liftweb.http.{Req, S}
+import net.liftweb.http._
 
 /**
  * This trait should be used by anything that wants to read
@@ -58,7 +58,7 @@ case class DefaultSwitch(name: String, description: String, initiallyOn: Boolean
 }
 
 
-class Switchboard(switches: Switchable*) extends XhmlManagementPage {
+class Switchboard(switches: Switchable*) extends XhmlManagementPage with Postable {
   val title = "Switchboard"
   val managementSubPath = "switchboard" :: Nil
 
@@ -67,7 +67,6 @@ class Switchboard(switches: Switchable*) extends XhmlManagementPage {
     def shouldShow(s: Switchable) = switchToShow.isEmpty || switchToShow === s.name
 
     <form method="POST">
-      <p>The switch param is {r.param("switch")}</p>
       <table border="1">
         <tr><th>Switch name</th><th>Description</th><th>State</th></tr>
         { for (switch <- switches.filter(shouldShow(_)).sortBy(_.name)) yield renderSwitch(switch) }
@@ -89,4 +88,14 @@ class Switchboard(switches: Switchable*) extends XhmlManagementPage {
     else
       <xml:group><input type="submit" name={s.name} value="ON"/><span style="color: DarkRed"> OFF </span></xml:group>
 
+
+  def processPost(r: Req) =
+    for (switch <- switches) {
+      r.param(switch.name) match {
+        case Full("ON") => switch.switchOn()
+        case Full("OFF") => switch.switchOff()
+        case Full(other) => error("Expected ON or OFF as value for "+ switch.name +" parameter")
+        case _ => // ignore
+      }
+    }
 }
