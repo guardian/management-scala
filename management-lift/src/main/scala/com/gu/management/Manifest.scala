@@ -1,10 +1,12 @@
 package com.gu.management
 
-import net.liftweb.http.PlainTextResponse
 import io.Source
+import net.liftweb.http.{Req, PlainTextResponse}
 
 object Manifest extends ManagementPage {
   val managementSubPath = "manifest" :: Nil
+
+  def render(r: Req) = response
 
   lazy val response = PlainTextResponse(
     Option(getClass.getResourceAsStream("/version.txt"))

@@ -12,24 +12,24 @@ trait ManagementPage {
   // the backticks here make path not be a catch-all new variable,
   // but mean "match against the value of path"
   lazy val dispatch: LiftRules.DispatchPF = {
-    case Req(`path`, _, GetRequest) => () => Full(response)
+    case r@Req(`path`, _, GetRequest) => () => Full(render(r))
   }
 
-  def response: LiftResponse
+  def render(req: Req): LiftResponse
 
   def url = path.mkString("/")
   def linktext = "/" + managementSubPath.mkString("/")
 }
 
 trait XhmlManagementPage extends ManagementPage {
-  final def response = XhtmlResponse(
+  final def render(r: Req) = XhtmlResponse(
       <html xmlns="http://www.w3.org/1999/xhtml">
         <head>
           <title>{title}</title>
         </head>
         <body>
           <h2>{title}</h2>
-          { body }
+          { body(r) }
         </body>
       </html>,
       Full(DocType.html5),
@@ -38,7 +38,7 @@ trait XhmlManagementPage extends ManagementPage {
       code = 200, renderInIEMode = false)
 
   def title: String
-  def body: NodeSeq
+  def body(r: Req): NodeSeq
 }
 
 object Management {

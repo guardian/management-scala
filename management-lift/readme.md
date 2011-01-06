@@ -20,7 +20,7 @@ You can write your own pages easily, e.g. the Properties one above looks like th
 
     object Properties extends ManagementPage {
         val managementSubPath = "properties" :: Nil
-        def response = PlainTextResponse(MyConfig.configuration.toString)
+        def render(r: Req) = PlainTextResponse(MyConfig.configuration.toString)
     }
 
 
