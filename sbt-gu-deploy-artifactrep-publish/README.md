@@ -31,7 +31,7 @@ Project file:
     }
 
 And include a `deploy` directory at `src/main/deploy` which has a wrapper
-`remoteDeploy.sh` and an implementing `remoteDeploy[ArtifactName].py'.
+`remoteDeploy.sh` and an implementing `remoteDeploy[ArtifactName].py`.
 
 Please do not implement ad hoc deployment schemes. Ultimately, the desired aim
 is to generate war artifacts rather than self-deployable zips.
