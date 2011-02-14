@@ -76,5 +76,7 @@ an additional line to add the Solr configuration to the deployment artifact:
 	  ...
     }
 
+Final warning: This deployment scheme does not include a `jmxclient` jar for you.
+
 Speak to Daithi for any additional explanation or assistance.
 
