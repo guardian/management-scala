@@ -1,6 +1,6 @@
 SBT Guardian Plugin
 ===================
-SBT plugin for custom Guardian build patterns.
+SBT plugin for `gu-deploy-libs` Guardian build patterns.
 
 Usage
 =====
@@ -9,8 +9,8 @@ Plugins file:
     import sbt._
 
     class Plugins(info: ProjectInfo) extends PluginDefinition(info) {
-      val guardian = "Guardian GitHub" at "http://guardian.github.com/maven/repo-releases"
-      val gu = "com.gu" % "sbt-gu-plugin" % "0.1"
+      val guardian = "Guardian Github" at "http://guardian.github.com/maven/repo-releases"
+      val deploy = "com.gu" % "sbt-gu-deploy-artifactrep-publish" % "1.1"
     }
 
 
@@ -20,13 +20,61 @@ Project file:
     import com.gu.solr.SolrProject
 
     class MyProject(info: ProjectInfo) extends DefaultWebProject(info)
-        with ManifestProject {
+        with PackagedWebapp {
 
-      // After SBT running with Scala > 2.8 :
-      // override def build = super.build.copy(artifact="content-api-custom", branch="release-101")
-      override def build = super.build.copy_("content-api-custom")
+      override def distributableElements = List(
+        DeploySupport(this src "deploy", deployLibJar),
+        WebApp(this get "artifact-name*.war", artifact, "artifact-name.war")
+      )
 
 	  ...
     }
 
+And include a `deploy` directory at `src/main/deploy` which has a wrapper
+`remoteDeploy.sh` and an implementing `remoteDeploy[ArtifactName].py'.
+
+Please do not implement ad hoc deployment schemes. Ultimately, the desired aim
+is to generate war artifacts rather than self-deployable zips.
+
+You should only have to include the `distributableElements` but on occasion it
+may be necessary to rename your artifact. To this end, it is possible to
+override the `artifact` definition but this is to be avoided:
+
+
+    import sbt._
+    import com.gu.solr.SolrProject
+
+    class MyProject(info: ProjectInfo) extends DefaultWebProject(info)
+        with PackagedWebapp {
+
+      override def artifact = "my_new_artifact_name"
+
+      override def distributableElements = List(
+        DeploySupport(this src "deploy", deployLibJar),
+        WebApp(this get "artifact-name*.war", artifact, "artifact-name.war")
+      )
+
+	  ...
+    }
+
+A second exception is the case of Solr applications. Those built with
+`sbt-solr-plugin` are the most straightforward to deploy, but do require
+an additional line to add the Solr configuration to the deployment artifact:
+
+    import sbt._
+    import com.gu.solr.SolrProject
+
+    class MyProject(info: ProjectInfo) extends DefaultWebProject(info)
+        with PackagedWebapp {
+
+      override def distributableElements = List(
+         DeploySupport(this src "deploy", deployLibJar),
+         WebApp(solrWar, artifact, "solr.war"),
+         Paths((sourcePath / "main" / "solr").head, artifact, "solr")
+      )
+
+	  ...
+    }
+
+Speak to Daithi for any additional explanation or assistance.
 
