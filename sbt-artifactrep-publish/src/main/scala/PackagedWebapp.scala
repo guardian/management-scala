@@ -1,4 +1,5 @@
 import sbt._
+import com.gu.versioninfo.VersionInfo
 
 trait PackagedWebapp extends BasicWebScalaProject with MavenStyleWebScalaPaths with VersionInfo {
   val deployCommon = "com.gu" % "deploy-common" % "1.35" % "runtime"

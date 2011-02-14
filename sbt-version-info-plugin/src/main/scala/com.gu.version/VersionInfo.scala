@@ -1,3 +1,5 @@
+package com.gu.versioninfo
+
 import java.net.InetAddress
 import java.util.Date
 import sbt._
@@ -29,5 +31,6 @@ trait VersionInfo extends BasicScalaProject {
   }
 
   override def compileAction = super.compileAction dependsOn generateVersion
-}
 
+  def isDev = buildNumberString == "DEV"
+}
