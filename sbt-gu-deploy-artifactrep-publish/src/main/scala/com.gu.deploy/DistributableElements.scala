@@ -18,6 +18,9 @@
 package com.gu.deploy
 
 import sbt._
+import java.io.File
+import java.io.FileInputStream
+import java.util.jar.Manifest
 
 abstract class DistributableElement {
   protected def filter(simplePattern: String): NameFilter = GlobFilter(simplePattern)
@@ -48,5 +51,28 @@ case class PathsFlat(src: Path, application: String) extends DistributableElemen
 case class WebApp(src: Path, application: String, warName: String) extends DistributableElement {
   override def addToDistribution(where: Path, logger: Logger) {
     FileUtilities.copyFile(src, where / application / "webapps" / warName, logger)
+  }
+}
+
+case class RebundledWebApp(src: Path, extra: Iterable[Path], application: String, warName: String) extends DistributableElement {
+  override def addToDistribution(where: Path, logger: Logger) {
+    FileUtilities.doInTemporaryDirectory(logger) { file: File =>
+      val tmp = Path.fromFile(file)
+
+      FileUtilities.unzip(src, tmp / "jar", logger)
+      FileUtilities.copy(extra, tmp / "jar", logger)
+
+      val jar = (tmp / "jar" ##) ** filter("*") filter { !_.isDirectory }
+
+      val manifestFile = (jar ** filter("MANIFEST.MF")).get.toList.head
+      val jarNoManifest = jar --- manifestFile
+
+      val manifest = new Manifest(new FileInputStream(manifestFile.asFile))
+
+      FileUtilities.jar(jarNoManifest.get, tmp / warName, manifest, true, logger)
+      FileUtilities.copyFile(tmp / warName, where / application / "webapps" / warName, logger)
+
+      Right(tmp / warName)
+    }
   }
 }
