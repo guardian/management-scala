@@ -78,5 +78,27 @@ an additional line to add the Solr configuration to the deployment artifact:
 
 Final warning: This deployment scheme does not include a `jmxclient` jar for you.
 
-Speak to Daithi for any additional explanation or assistance.
+
+
+Deployment Example
+==================
+When you application is building on continuous integration and you have checked the artifacts on the artifact repository, you can deploy as follows:
+
+NOTE: Until this scheme has been backported, this approach will only work for `gudeploy01` deployments.
+
+Suppose you have an `artifact` called `my-application` and you want to deploy build 1 to the CODE staging environment.
+
+    $ ssh -A devsuprt@gudeploy01
+    > /opt/deploy/bin/deploy.sh --type my-application --release trunk --stage=CODE --build 1
+
+And follow the instructions.
+
+PLEASE: Include the appropriate command line as a reference if you are raising a deployment ticket, e.g. for production deployment.
+
+
+
+Further Explanation
+===================
+Speak to Daithi for additional explanation or assistance for `sbt-gu-deploy-artifactrep-publish` and to Francis for `gu-deploy` lib deployments.
+
 
