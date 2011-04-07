@@ -6,19 +6,19 @@ management-lift manifest reporter, which displays the content of this file.
 
 To use:
 
-1. Add the sbt-version-info-plugin to your sbt build, by creating project/plugins/Plugins.scala that looks like:
+1. Work out what released version you want to use by going to <https://github.com/guardian/guardian.github.com/tree/master/maven/repo-releases/com/gu/sbt-version-info-plugin>
+
+2. Add the sbt-version-info-plugin to your sbt build, by creating project/plugins/Plugins.scala that looks like:
 
          import sbt._
          class Plugins(info: ProjectInfo) extends PluginDefinition(info) {
            val guardianGithub = "Guardian Github Releases" at "http://guardian.github.com/maven/repo-releases"
-	   val guardianGithubSnapshots = "Guardian Github Snapshots" at "http://guardian.github.com/maven/repo-snapshots"
 
            // replace the version number with the version you need to use
-           //  if you're using a release version (i.e. without -SNAPSHOT) then you may remove guardianGithubSnapshots above
-           val versionInfoPlugin = "com.gu" % "sbt-version-info-plugin" % "1.0-SNAPSHOT"
+           val versionInfoPlugin = "com.gu" % "sbt-version-info-plugin" % "1.1"
          }
 
-2. Change your project build script to mix in "VersionInfo":
+3. Change your project build script to mix in "VersionInfo":
 
         import sbt._
 
@@ -26,7 +26,7 @@ To use:
            ...
         }
 
-3. The VersionInfo trait relies on a couple of system properties to obtain the build number etc from TeamCity.
+4. The VersionInfo trait relies on a couple of system properties to obtain the build number etc from TeamCity.
    To pass these in you want a sbt start script that looks a bit like this (which by convention we call sbt-tc):
 
        #!/bin/bash
