@@ -5,8 +5,10 @@ import java.util.Date
 import sbt._
 
 trait VersionInfo extends BasicScalaProject {
+  def build = "trunk"
+
   lazy val buildNumberString = systemOptional[String]("build.number", "DEV").value
-  lazy val buildName = "trunk-build." + buildNumberString
+  lazy val buildName = "%s-build.%s".format(build, buildNumberString)
 
   lazy val vcsNumberString = systemOptional[String]("build.vcs.number", "DEV").value
 

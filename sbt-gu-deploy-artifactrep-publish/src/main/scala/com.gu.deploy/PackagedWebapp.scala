@@ -41,7 +41,7 @@ trait PackagedWebapp extends BasicWebScalaProject with VersionInfo {
       Path fromFile "/r2/ArtifactRepository"
     }
 
-  lazy val distOutputDir = artifactrep / artifact / "trunk" / buildName
+  lazy val distOutputDir = artifactrep / artifact / build / buildName
 
   def distributableElements: List[DistributableElement]
 
